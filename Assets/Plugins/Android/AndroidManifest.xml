@@ -34,8 +34,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="maxst_oauth2redirect"
-                    android:scheme="com.maxst.maxsso" />
+                    android:host=""
+                    android:scheme="" />
 
             </intent-filter>
 

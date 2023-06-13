@@ -1636,7 +1636,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hiddenMenuPrefeb: {fileID: 4362344706199412829, guid: fdb202897e5d04248bebfb9eaf1b257b,
     type: 3}
-  limitClickCount: 7
+  limitClickCount: 1
 --- !u!1 &6178449737904047633
 GameObject:
   m_ObjectHideFlags: 0
@@ -1785,7 +1785,6 @@ MonoBehaviour:
   loginPopupPrefeb: {fileID: 6341149795043502492}
   loginFromEmailBtn: {fileID: 8744102207750018129}
   openTab: {fileID: 667423758957277068}
-  autoLoginTogle: {fileID: 0}
   LogoutBtn: {fileID: 1623024955}
   ReFreshBtn: {fileID: 766974444}
   openidConnectArguments: {fileID: 11400000, guid: 86ecef58eaf717e499ae7876d5dcd84b,

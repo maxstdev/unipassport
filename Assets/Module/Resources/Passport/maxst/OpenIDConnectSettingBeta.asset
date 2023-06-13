@@ -12,5 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b4806fc0569361a4aa957c6a539756c4, type: 3}
   m_Name: OpenIDConnectSettingBeta
   m_EditorClassIdentifier: 
-  keys: 
-  values: []
+  keys: 00000000010000000200000003000000
+  values:
+  - S256
+  - /profile/v1/public/oauth/authorize
+  - '{0}{1}?client_id={2}&response_type={3}&scope={4}&redirect_uri={5}&code_challenge={6}&code_challenge_method={7}'
+  - authorization_code
