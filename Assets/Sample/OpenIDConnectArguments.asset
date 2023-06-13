@@ -14,9 +14,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   keys: 000000000100000002000000030000000400000005000000
   values:
-  - maxverse-public
+  - 
   - code
   - openid
-  - com.maxst.maxsso://maxst_oauth2redirect
-  - com.maxst.maxsso://maxst_oauth2redirect
-  - https://alpha.maxverse.io/ko
+  - 
+  - 
+  - 
