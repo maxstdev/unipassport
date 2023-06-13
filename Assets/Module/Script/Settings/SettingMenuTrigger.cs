@@ -6,7 +6,7 @@ namespace Maxst.Settings
     public class SettingMenuTrigger : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] GameObject hiddenMenuPrefeb;
-        [SerializeField] int limitClickCount = 7;
+        [SerializeField] int limitClickCount = 0;
 		private int clickCount = 0;
 		private float lastTimeClick = 0;
 

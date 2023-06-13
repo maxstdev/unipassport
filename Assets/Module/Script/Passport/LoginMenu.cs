@@ -1,10 +1,15 @@
-﻿using Maxst.Settings;
+﻿using i5.Toolkit.Core.OpenIDConnectClient;
+using Maxst.Settings;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Maxst.Passport
 {
+#if !UNITY_ANDROID && !UNITY_IOS
+    public class LoginMenu : MonoBehaviour, IOpenIDConnectListener, MaxstIOpenIDConnectProvider
+#else
     public class LoginMenu : MonoBehaviour, IOpenIDConnectListener
+#endif
     {
         [SerializeField] private GameObject loginPopupPrefeb;
         [SerializeField] private Button loginFromEmailBtn;
@@ -28,6 +33,10 @@ namespace Maxst.Passport
             ReFreshBtn.onClick.AddListener(OnClickRefreshBtn);
             OpenIdConnectAdapter = OpenIDConnectAdapter.Instance;
             OpenIdConnectAdapter.InitOpenIDConnectAdapter(openidConnectArguments, this);
+#if !UNITY_ANDROID && !UNITY_IOS
+            OpenIdConnectAdapter.SetWindowLoginServiceManger(this);
+#endif
+
 #endif
         }
 
@@ -42,7 +51,6 @@ namespace Maxst.Passport
             var PKCEManagerInstance = PKCEManager.GetInstance();
             var CodeVerifier = PKCEManagerInstance.GetCodeVerifier();
             var CodeChallenge = PKCEManagerInstance.GetCodeChallenge(CodeVerifier);
-
             OpenIdConnectAdapter.ShowOIDCProtocolLoginPage(CodeVerifier, CodeChallenge);
         }
 
@@ -68,7 +76,23 @@ namespace Maxst.Passport
 
         public void OnLogout()
         {
-            Debug.Log($"[LoginMenu] OnLogout");
+            OpenIdConnectAdapter.OnLogout();
         }
+
+#if !UNITY_ANDROID && !UNITY_IOS
+        public void OnAuthorazationCode(string code)
+        {
+            Debug.Log($"OnAuthorazationCode : {code}");
+            OpenIdConnectAdapter.AcceceToken(code);
+        }
+
+        public string GetLoginPageURL(string redirectUri)
+        {
+            var PKCEManagerInstance = PKCEManager.GetInstance();
+            var CodeVerifier = PKCEManagerInstance.GetCodeVerifier();
+            var CodeChallenge = PKCEManagerInstance.GetCodeChallenge(CodeVerifier);
+            return OpenIdConnectAdapter.GetURL(redirectUri, CodeVerifier, CodeChallenge);
+        }
+#endif
     }
 }
