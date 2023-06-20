@@ -1636,7 +1636,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   hiddenMenuPrefeb: {fileID: 4362344706199412829, guid: fdb202897e5d04248bebfb9eaf1b257b,
     type: 3}
-  limitClickCount: 1
+  limitClickCount: 2
 --- !u!1 &6178449737904047633
 GameObject:
   m_ObjectHideFlags: 0
@@ -1867,7 +1867,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: MaxChat 0.1
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: bfd99c9b9b1555740bdf6beb58e7bc4b, type: 2}
   m_sharedMaterial: {fileID: 1084190047344153822, guid: bfd99c9b9b1555740bdf6beb58e7bc4b,

@@ -1,5 +1,6 @@
 ﻿using i5.Toolkit.Core.OpenIDConnectClient;
 using Maxst.Settings;
+using System;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -20,8 +21,6 @@ namespace Maxst.Passport
 
         private OpenIDConnectAdapter OpenIdConnectAdapter;
 
-        public ILoginListener LoginListener { get; set; } = null;
-
         private void Awake()
         {
 #if !UNITY_EDITOR && UNITY_WEBGL
@@ -38,6 +37,7 @@ namespace Maxst.Passport
 #endif
 
 #endif
+
         }
 
 #if UNITY_EDITOR || !UNITY_WEBGL
@@ -60,23 +60,23 @@ namespace Maxst.Passport
         }
 #endif
 
-        public void OnSuccess(Token Token)
+        public void OnSuccess(Token Token, RequestType Type)
         {
+            Debug.Log($"[LoginMenu] OnSuccess RequestType : {Type}");
             Debug.Log($"[LoginMenu] OnSuccess idToken : {Token.idToken}");
             Debug.Log($"[LoginMenu] OnSuccess accessToken : {Token.accessToken}");
             Debug.Log($"[LoginMenu] OnSuccess refreshToken : {Token.refreshToken}");
-            LoginListener?.OnSuccess();
         }
 
-        public void OnFail(LoginErrorCode LoginErrorCode)
+        public void OnFail(ErrorCode ErrorCode, Exception e)
         {
-            Debug.Log($"[LoginMenu] OnFail : {LoginErrorCode}");
-            LoginListener?.OnFail(LoginErrorCode);
+            Debug.Log($"[LoginMenu] OnFail : {ErrorCode}");
+            Debug.Log($"[LoginMenu] Exception : {e}");
         }
 
         public void OnLogout()
         {
-            OpenIdConnectAdapter.OnLogout();
+            Debug.Log($"[LoginMenu] OnLogout");
         }
 
 #if !UNITY_ANDROID && !UNITY_IOS

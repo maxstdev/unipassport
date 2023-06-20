@@ -19,7 +19,7 @@ namespace Maxst.Passport
 #endif
 
         public Action<string, string> LoginSuccessAction { get; set; } = null;
-        public Action<LoginErrorCode> LoginFailAction { get; set; } = null;
+        public Action<ErrorCode> LoginFailAction { get; set; } = null;
 
         private Coroutine CheckTokenCoroutine;
 
@@ -80,7 +80,7 @@ namespace Maxst.Passport
 
             if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
             {
-                LoginFailAction?.Invoke(LoginErrorCode.TOKEN_IS_EMPTY);
+                LoginFailAction?.Invoke(ErrorCode.TOKEN_IS_EMPTY);
                 TokenRepo.Instance.Config(null);
             }
             else

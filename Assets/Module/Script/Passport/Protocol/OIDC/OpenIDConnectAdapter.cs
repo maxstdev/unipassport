@@ -158,14 +158,14 @@ namespace Maxst.Passport
                                 TokenRepo.Instance.Config(null);
                                 return;
                             }
-                            IOpenIDConnectListener?.OnSuccess(token);
+                            IOpenIDConnectListener?.OnSuccess(token, RequestType.ACCECE_TOKEN);
                             Debug.Log($"[OpenIDConnectAdapter] token.idToken : {token.idToken}");
                             Debug.Log($"[OpenIDConnectAdapter] token.accessToken : {token.accessToken}");
                             Debug.Log($"[OpenIDConnectAdapter] token.refreshToken : {token.refreshToken}");
                         },
-                        (LoginErrorCode) =>
+                        (LoginErrorCode, Exception) =>
                         {
-                            IOpenIDConnectListener?.OnFail(LoginErrorCode);
+                            IOpenIDConnectListener?.OnFail(LoginErrorCode, Exception);
                             Debug.Log($"[OpenIDConnectAdapter] LoginErrorCode : {LoginErrorCode}");
                         }
                     )
@@ -178,10 +178,6 @@ namespace Maxst.Passport
                         OpenIDConnectArguments,
                         (status, token) =>
                         {
-                            Debug.Log($"[OpenIDConnectAdapter] OnSuccess RefreshToken idToken : {token.idToken}");
-                            Debug.Log($"[OpenIDConnectAdapter] OnSuccess RefreshToken accessToken : {token.accessToken}");
-                            Debug.Log($"[OpenIDConnectAdapter] OnSuccess RefreshToken refreshToken : {token.refreshToken}");
-
                             if (status != TokenStatus.Validate)
                             {
                                 Debug.LogWarning("[OpenIDConnectAdapter] auth fail.. need retry login");
@@ -189,8 +185,23 @@ namespace Maxst.Passport
                                 complete?.Invoke();
                                 return;
                             }
-
                             complete?.Invoke();
+
+                            if (token == null)
+                            {
+                                Debug.Log($"[OpenIDConnectAdapter] Token value does not exist");
+                            }
+                            else {
+                                Debug.Log($"[OpenIDConnectAdapter] OnSuccess RefreshToken idToken : {token.idToken}");
+                                Debug.Log($"[OpenIDConnectAdapter] OnSuccess RefreshToken accessToken : {token.accessToken}");
+                                Debug.Log($"[OpenIDConnectAdapter] OnSuccess RefreshToken refreshToken : {token.refreshToken}");
+
+                                IOpenIDConnectListener?.OnSuccess(token, RequestType.REFRESH_TOKEN);
+                            }
+                        },
+                        (Exception) =>
+                        {
+                            IOpenIDConnectListener?.OnFail(ErrorCode.REFRESH, Exception);
                         }
                     )
                 );
@@ -217,12 +228,19 @@ namespace Maxst.Passport
                          {
                              Debug.Log($"[OpenIDConnectAdapter] SessionLogout success");
                              complete?.Invoke();
+                             IOpenIDConnectListener?.OnLogout();
                          },
-                        (e) =>
+                        (Exception) =>
                         {
-                            Debug.Log($"[OpenIDConnectAdapter] SessionLogout fail : {e}");
+                            Debug.Log($"[OpenIDConnectAdapter] SessionLogout fail : {Exception}");
                             complete?.Invoke();
+                            IOpenIDConnectListener?.OnFail(ErrorCode.LOGOUT, Exception);
                         });
+                    },
+                    (Exception) =>
+                    {
+                        IOpenIDConnectListener?.OnFail(ErrorCode.LOGOUT_REFRESH, Exception);
+                        Debug.Log($"[OpenIDConnectAdapter] Exception : {Exception}");
                     }
                 )
             );

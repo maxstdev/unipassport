@@ -66,26 +66,28 @@ namespace Maxst.Passport
         public IEnumerator GetPassportToken(
             OpenIDConnectArguments OpenIDConnectArguments, string code, string CodeVerifier,
             System.Action<TokenStatus, Token> callback,
-            Action<LoginErrorCode> LoginFailAction
+            Action<ErrorCode, Exception> LoginFailAction
             )
         {
             yield return new WaitUntil(() => tokenStatus.Value != TokenStatus.Renewing);
-            if (IsTokenExpired())
-            {
-                yield return FetchPassportToken(OpenIDConnectArguments, code, CodeVerifier, LoginFailAction);
-            }
+            yield return FetchPassportToken(OpenIDConnectArguments, code, CodeVerifier, LoginFailAction);
+            
             callback?.Invoke(tokenStatus.Value, token);
         }
 
-        public IEnumerator GetPassportRefreshToken(OpenIDConnectArguments OpenIDConnectArguments, System.Action<TokenStatus, Token> callback)
+        public IEnumerator GetPassportRefreshToken(OpenIDConnectArguments OpenIDConnectArguments, 
+            System.Action<TokenStatus, Token> callback,
+             Action<Exception> RefreshFailAction)
         {
             yield return new WaitUntil(() => tokenStatus.Value != TokenStatus.Renewing);
             if (IsTokenExpired())
             {
                 OpenIDConnectArguments.TryGetValue(OpenIDConnectArgument.ClientID, out var ClientID);
                 string grant_type = "refresh_token";
+
+                Debug.Log($"GetPassportRefreshToken : {RefreshToken}");
                 
-                yield return FetchPassportRefreshToken(ClientID, grant_type, RefreshToken);
+                yield return FetchPassportRefreshToken(ClientID, grant_type, RefreshToken, RefreshFailAction);
             }
             callback?.Invoke(tokenStatus.Value, token);
         }
@@ -130,19 +132,20 @@ namespace Maxst.Passport
                 },
                 error => // on error
                 {
-                    StoreToken();
-                    fail?.Invoke(error);
+                    Config(null);
                     Debug.Log($"[SessionLogout] error {error}");
+                    fail?.Invoke(error);
                 },
                 () =>
                 {
-                    StoreToken();
-                    success?.Invoke();
+                    Config(null);
                     Debug.Log("[SessionLogout] success");
+                    success?.Invoke();
                 });
         }
 
-        private IEnumerator FetchPassportRefreshToken(string clientId, string grantType, string refreshToken) {
+        private IEnumerator FetchPassportRefreshToken(string clientId, string grantType, string refreshToken,
+            Action<Exception> RefreshFailAction) {
             System.IObservable<CredentialsToken> ob = AuthService.Instance.PassportRefreshToken(clientId, grantType, refreshToken); 
 
             tokenStatus.Value = TokenStatus.Renewing;
@@ -165,12 +168,14 @@ namespace Maxst.Passport
                     else
                     {
                         tokenStatus.Value = TokenStatus.Expired;
+                        RefreshFailAction.Invoke(null);
                     }
                 },
                 error => // on error
                 {
                     Debug.LogWarning($"[FetchPassportRefreshToken] error : {error}");
                     tokenStatus.Value = TokenStatus.Expired;
+                    RefreshFailAction.Invoke(error);
                 },
                 () =>
                 {
@@ -182,7 +187,7 @@ namespace Maxst.Passport
 
         private IEnumerator FetchPassportToken(
             OpenIDConnectArguments OpenIDConnectArguments, string Code, string CodeVerifier,
-            Action<LoginErrorCode> LoginFailAction
+            Action<ErrorCode, Exception> LoginFailAction
         )
         {
             tokenStatus.Value = TokenStatus.Renewing;
@@ -223,7 +228,7 @@ namespace Maxst.Passport
 
                             if (string.IsNullOrEmpty(accessToken) || string.IsNullOrEmpty(refreshToken))
                             {
-                                LoginFailAction?.Invoke(LoginErrorCode.TOKEN_IS_EMPTY);
+                                LoginFailAction?.Invoke(ErrorCode.TOKEN_IS_EMPTY, null);
                                 tokenStatus.Value = TokenStatus.Expired;
                                 Config(null);
                             }
@@ -247,6 +252,7 @@ namespace Maxst.Passport
                     {
                         Debug.LogWarning($"[FetchToken] FetchToken error : {error}");
                         tokenStatus.Value = TokenStatus.Expired;
+                        LoginFailAction?.Invoke(ErrorCode.TOKEN_IS_EMPTY, error);
                     },
                     () =>
                     {
