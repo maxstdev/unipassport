@@ -10,8 +10,7 @@ unipassport package is for developing Unity apps that target native platforms(An
 * iOS
 
 ## Docs about unipassport
-You can check docs and guides at https://doc.maxverse.io/passport-login 
-
+You can check docs and guides at https://doc.maxverse.io/
 ## License
 [Apache-2.0 license](LICENSE)
 
