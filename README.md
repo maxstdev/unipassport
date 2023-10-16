@@ -63,7 +63,7 @@ unipassport의 상세 가이드는 아래 링크를 참고하십시오.
 You can check docs and guides at [unipassport](https://doc.maxverse.io/passport-login-sdk)
 
 ## License
-The source code for the site is licensed under the MIT license, which you can find in the [License.txt](https://github.com/maxstdev/unipassport/blob/main/LICENSE) file.
+The source code for the site is licensed under the MIT license, which you can find in the [License.txt](https://github.com/maxstdev/unipassport/blob/main/LICENSE.txt) file.
 
 ### Third Party
 * [UniRx](https://github.com/neuecc/UniRx.git) : [MIT license](https://github.com/neuecc/UniRx/blob/master/LICENSE)
